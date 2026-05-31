@@ -1,0 +1,7 @@
+Lib/
+Scripts/
+include/
+pyvenv.cfg
+pyvenv
+.lock
+CACHEDIR.TAG
