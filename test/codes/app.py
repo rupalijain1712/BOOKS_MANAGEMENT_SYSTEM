@@ -144,7 +144,9 @@ def admin_users():
     if current_user.role != "admin":
         return "Access Denied"
 
-    users = User.query.all()
+    users = User.query.filter_by(
+            role="customer"
+        ).all()
 
     return render_template(
         "admin_users.html",
@@ -156,30 +158,24 @@ def admin_users():
 # delete books:
 
 # code for the books that will showcase in the website
-
 @app.route("/books")
 def books():
 
-    category = request.args.get("category")
+    search = request.args.get("search")
 
-    if category:
+    if search:
 
-        all_books = Book.query.filter_by(
-            category=category
+        all_books = Book.query.filter(
+            Book.title.ilike(f"%{search}%")
         ).all()
 
     else:
 
         all_books = Book.query.all()
 
-    categories = db.session.query(
-        Book.category
-    ).distinct().all()
-
     return render_template(
         "books.html",
-        books=all_books,
-        categories=categories
+        books=all_books
     )
 
 # code for the logout
@@ -219,10 +215,18 @@ def admin_dashboard():
         Book.category
     ).distinct().all()
 
+    books_count = Book.query.count()
+
+    users_count = User.query.filter_by(
+        role="customer"
+        ).count()
+
     return render_template(
         "admin_dashboard.html",
         books=books,
-        categories=categories
+        categories=categories,
+        books_count=books_count,
+        users_count=users_count
     )
 if __name__ == "__main__":
     app.run(debug=True)

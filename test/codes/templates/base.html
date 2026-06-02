@@ -19,10 +19,10 @@
     <div class="container">
 
         <a class="navbar-brand" href="/">
-            📚 BookVerse
+            Book Management System
         </a>
 
-        <div class="navbar-nav ms-auto">
+        <div class="navbar-nav">
 
             <a class="nav-link" href="/">
                 Home
@@ -34,21 +34,30 @@
 
             {% if current_user.is_authenticated %}
 
-            <a class="nav-link" href="/logout">
-                Logout
-            </a>
+                {% if current_user.role == "admin" %}
+
+                    <a class="nav-link" href="/admin/dashboard">
+                        Admin Dashboard
+                    </a>
+
+                {% endif %}
+
+                <a class="nav-link" href="/logout">
+                    Logout
+                </a>
 
             {% else %}
 
-            <a class="nav-link" href="/login">
-                Login
-            </a>
+                <a class="nav-link" href="/login">
+                    Login
+                </a>
 
-            <a class="nav-link" href="/register">
-                Register
-            </a>
+                <a class="nav-link" href="/register">
+                    Register
+                </a>
 
             {% endif %}
+
         </div>
 
     </div>
