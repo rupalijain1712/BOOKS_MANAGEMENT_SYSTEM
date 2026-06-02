@@ -2,60 +2,96 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between">
+<form method="GET" action="/books" class="mb-4">
 
-    <h2>Books List</h2>
+    <div class="row">
 
-    <a
-    href="/add-book"
-    class="btn btn-success">
+        <div class="col-md-4">
 
-        Add Book
+            <select
+                name="category"
+                class="form-control"
+            >
 
-    </a>
+                <option value="">
+                    All Categories
+                </option>
+
+                {% for category in categories %}
+
+                <option
+                    value="{{ category[0] }}"
+                >
+                    {{ category[0] }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="col-md-2">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Search
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+<h2 class="mb-4">
+    Books Collection
+</h2>
+
+<div class="row">
+
+{% for book in books %}
+
+    <div class="col-md-4 mb-4">
+
+        <div class="card h-100 shadow-sm">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+                    {{ book.title }}
+                </h5>
+
+                <p>
+                    <strong>Author:</strong>
+                    {{ book.author }}
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    {{ book.category }}
+                </p>
+
+                <h5>
+                    ₹ {{ book.price }}
+                </h5>
+
+                <button
+                    class="btn btn-primary"
+                >
+                    Buy Now
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endfor %}
 
 </div>
-
-<hr>
-
-<table class="table table-bordered">
-
-    <tr>
-
-        <th>ID</th>
-
-        <th>Title</th>
-
-        <th>Author</th>
-
-        <th>Category</th>
-
-        <th>Price</th>
-
-        <th>Stock</th>
-
-    </tr>
-
-    {% for book in books %}
-
-    <tr>
-
-        <td>{{ book.id }}</td>
-
-        <td>{{ book.title }}</td>
-
-        <td>{{ book.author }}</td>
-
-        <td>{{ book.category }}</td>
-
-        <td>{{ book.price }}</td>
-
-        <td>{{ book.stock }}</td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
 
 {% endblock %}
