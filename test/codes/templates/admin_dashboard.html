@@ -139,6 +139,8 @@
             <th>Price</th>
             <th>Stock</th>
             <th>Actions</th>
+            <th>Created At</th>
+            <th>Updated At</th>
 
         </tr>
 
@@ -169,6 +171,8 @@
                     Delete
                 </a>
 
+            <td>{{ book.created_at.strftime('%Y-%m-%d %H:%M:%S') if book.created_at else 'N/A' }}</td>
+            <td>{{ book.updated_at.strftime('%Y-%m-%d %H:%M:%S') if book.updated_at else 'N/A' }}</td>
             </td>
 
         </tr>
