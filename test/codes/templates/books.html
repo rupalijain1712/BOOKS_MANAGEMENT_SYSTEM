@@ -2,96 +2,116 @@
 
 {% block content %}
 
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+<h2>Books Collection</h2>
+
+<a href="/" class="btn btn-secondary">
+    Home
+</a>
+
+</div>
+
 <form method="GET" action="/books" class="mb-4">
 
-    <div class="row">
+<div class="row">
 
-        <div class="col-md-4">
+    <div class="col-md-4">
 
-            <select
-                name="category"
-                class="form-control"
-            >
+        <select
+            name="category"
+            class="form-control"
+        >
 
-                <option value="">
-                    All Categories
-                </option>
+            <option value="">
+                All Categories
+            </option>
 
-                {% for category in categories %}
+            {% for category in categories %}
 
-                <option
-                    value="{{ category[0] }}"
-                >
-                    {{ category[0] }}
-                </option>
+            <option value="{{ category[0] }}">
+                {{ category[0] }}
+            </option>
 
-                {% endfor %}
+            {% endfor %}
 
-            </select>
+        </select>
 
-        </div>
+    </div>
 
-        <div class="col-md-2">
+    <div class="col-md-2">
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Filter
+        </button>
+
+    </div>
+
+</div>
+
+</form>
+
+{% if books %}
+
+<div class="row">
+
+{% for book in books %}
+
+<div class="col-md-4 mb-4">
+
+    <div class="card h-100 shadow-sm">
+
+        <div class="card-body">
+
+            <h5 class="card-title">
+                {{ book.title }}
+            </h5>
+
+            <p>
+                <strong>Author:</strong>
+                {{ book.author }}
+            </p>
+
+            <p>
+                <strong>Category:</strong>
+                {{ book.category }}
+            </p>
+
+            <h5>
+                ₹ {{ book.price }}
+            </h5>
 
             <button
-                type="submit"
                 class="btn btn-primary"
             >
-                Search
+                Buy Now
             </button>
 
         </div>
 
     </div>
 
-</form>
-
-<h2 class="mb-4">
-    Books Collection
-</h2>
-
-<div class="row">
-
-{% for book in books %}
-
-    <div class="col-md-4 mb-4">
-
-        <div class="card h-100 shadow-sm">
-
-            <div class="card-body">
-
-                <h5 class="card-title">
-                    {{ book.title }}
-                </h5>
-
-                <p>
-                    <strong>Author:</strong>
-                    {{ book.author }}
-                </p>
-
-                <p>
-                    <strong>Category:</strong>
-                    {{ book.category }}
-                </p>
-
-                <h5>
-                    ₹ {{ book.price }}
-                </h5>
-
-                <button
-                    class="btn btn-primary"
-                >
-                    Buy Now
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 {% endfor %}
 
 </div>
+
+{% else %}
+
+<div class="alert alert-warning text-center">
+
+<h4>Book Not Found 📚</h4>
+
+<p>
+    No books are available in the selected category.
+</p>
+
+</div>
+
+{% endif %}
 
 {% endblock %}
