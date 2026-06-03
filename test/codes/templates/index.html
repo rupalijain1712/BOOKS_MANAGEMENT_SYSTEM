@@ -42,32 +42,21 @@
 
 <div class="row">
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            Programming
-        </div>
+{% for category in categories %}
+
+    <div class="col-md-3 mb-3">
+
+        <a href="/books?category={{ category[0] }}" class="text-decoration-none text-dark">
+            <div class="card p-3 text-center shadow-sm">
+                <h5>{{ category[0] }}</h5>
+            </div>
+        </a>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            Science
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            Fiction
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card p-3 text-center">
-            Business
-        </div>
-    </div>
+{% endfor %}
 
 </div>
-
 <br>
 
 <h2 class="mt-5">

@@ -55,13 +55,19 @@ with app.app_context():
 def home():
 
     latest_books = Book.query.order_by(
-        Book.created_at.desc()
+        Book.id.desc()
     ).limit(4).all()
 
+    categories = db.session.query(
+        Book.category
+    ).distinct().all()
+
     return render_template(
-        "index.html",    #Code for the website is written in the index.html 
-        latest_books=latest_books
+        "index.html",
+        latest_books=latest_books,
+        categories=categories
     )
+
 
 # Registrations Code:
 @app.route(
@@ -242,20 +248,32 @@ def delete_book(id):
 def books():
 
     search = request.args.get("search")
+    category = request.args.get("category")
+
+    query = Book.query
 
     if search:
 
-        all_books = Book.query.filter(
+        query = query.filter(
             Book.title.ilike(f"%{search}%")
-        ).all()
+        )
 
-    else:
+    if category:
 
-        all_books = Book.query.all()
+        query = query.filter_by(
+            category=category
+        )
+
+    all_books = query.all()
+
+    categories = db.session.query(
+        Book.category
+    ).distinct().all()
 
     return render_template(
         "books.html",
-        books=all_books
+        books=all_books,
+        categories=categories
     )
 
 # code for the logout
