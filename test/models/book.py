@@ -24,5 +24,11 @@ class Book(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=lambda: datetime.now(IST)
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(IST),
+        onupdate=lambda: datetime.now(IST) 
     )
