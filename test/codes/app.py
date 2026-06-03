@@ -1,3 +1,8 @@
+
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from flask_login import (
     LoginManager,
     login_user,
@@ -56,7 +61,7 @@ def home():
         latest_books=latest_books
     )
 
-# Registerions Code:
+# Registrations Code:
 @app.route(
     "/register",
     methods=["GET", "POST"]
@@ -114,8 +119,9 @@ def login():
 
 @app.route("/add-book", methods=["GET", "POST"])
 @login_required
-def add_book():
 
+def add_book():
+    
     if current_user.role != "admin":
         return "Access Denied"
 
@@ -134,8 +140,10 @@ def add_book():
         db.session.commit()
 
         return redirect("/books")
+    #try catch to be done
 
     return render_template("add_book.html")
+
 # manage users:
 @app.route("/admin/users")
 @login_required
@@ -154,8 +162,63 @@ def admin_users():
     ) 
 
 # edit books:
+@app.route("/edit-book/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_book(id):
+    # 1. Fetch the existing book from MySQL using its unique ID
+    book = Book.query.get_or_404(id)
+    
+    # Security check: Ensure only admins can edit books
+    if current_user.role != "admin":
+        return "Access Denied", 403
+
+    # 2. Handle the Form Submission (When the Admin clicks "Save Changes")
+    if request.method == "POST":
+        book.title = request.form["title"]
+        book.author = request.form["author"]
+        book.isbn = request.form["isbn"]
+        book.price = float(request.form["price"])
+        book.stock = int(request.form["stock"])
+        book.category = request.form["category"]
+        
+        try:
+            # Save the modifications to your MySQL database
+            db.session.commit()
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            return f"There was an error updating the book: {e}"
+
+    # 3. Handle the Initial Click (GET Request)
+    # This sends the retrieved book object into your friend's edit template
+    return render_template("edit_book.html", book=book)
+
 
 # delete books:
+@app.route("/delete-book/<int:id>", methods=["GET", "POST"])
+@login_required
+def delete_book(id):
+    # 1. Security check: Ensure only logged-in administrators can delete inventory
+    if current_user.role != "admin":
+        return "Access Denied", 403
+
+    # 2. Retrieve the specific book from MySQL or throw a 404 error if it doesn't exist
+    book_to_delete = Book.query.get_or_404(id)
+
+    try:
+        # 3. Tell SQLAlchemy to stage this record for deletion
+        db.session.delete(book_to_delete)
+        
+        # 4. Commit the transaction to permanently remove the row from MySQL
+        db.session.commit()
+        
+        # 5. Redirect the administrator back to the dashboard to show the updated table
+        return redirect(url_for("admin_dashboard"))
+        
+    except Exception as e:
+        # If something goes wrong with the database connection, safely undo the staging
+        db.session.rollback()
+        return f"There was an error deleting the book: {e}", 500
 
 # code for the books that will showcase in the website
 @app.route("/books")
