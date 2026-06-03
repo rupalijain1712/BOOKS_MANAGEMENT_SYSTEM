@@ -117,31 +117,46 @@ def login():
 
 # code for the add books:
 
+
 @app.route("/add-book", methods=["GET", "POST"])
 @login_required
 
 def add_book():
-    
+    # 1. Security Check
     if current_user.role != "admin":
-        return "Access Denied"
+        return "Access Denied", 403
 
+    # 2. Handle Form Submission
     if request.method == "POST":
+        try:
+            # Create the new Book instance from form data
+            new_book = Book(
+                title=request.form["title"],
+                author=request.form["author"],
+                category=request.form["category"],
+                isbn=request.form["isbn"],
+                price=float(request.form["price"]),
+                stock=int(request.form["stock"])
+            )
 
-        new_book = Book(
-            title=request.form["title"],
-            author=request.form["author"],
-            category=request.form["category"],
-            isbn=request.form["isbn"],
-            price=float(request.form["price"]),
-            stock=int(request.form["stock"])
-        )
+            # Stage and commit to MySQL
+            db.session.add(new_book)
+            db.session.commit()
 
-        db.session.add(new_book)
-        db.session.commit()
+            # Success! Redirect back to the inventory
+            return redirect("/books")
 
-        return redirect("/books")
-    #try catch to be done
+        except Exception as e:
+            # CRITICAL: Roll back the transaction to clean up the broken database session
+            db.session.rollback()
+            
+            # Print the error to your VS Code console for debugging
+            print(f"Database Error: {e}")
+            
+            # Return a friendly error message to the user instead of a generic 500 crash page
+            return f"An error occurred while adding the book. It might be due to a duplicate ISBN number. Error: {e}", 400
 
+    # 3. Handle GET request (Render the actual form page)
     return render_template("add_book.html")
 
 # manage users:
