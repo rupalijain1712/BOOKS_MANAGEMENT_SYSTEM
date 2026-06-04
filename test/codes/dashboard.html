@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>
+    Welcome {{ current_user.username }} 👋
+</h2>
+
+<hr>
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card text-center p-4">
+
+            <h5>My Orders</h5>
+
+            <h2>
+                {{ total_orders }}
+            </h2>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-center p-4">
+
+            <h5>Cart Items</h5>
+
+            <h2>
+                {{ cart_items }}
+            </h2>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-center p-4">
+
+            <h5>Books Purchased</h5>
+
+            <h2>
+                {{ books_bought }}
+            </h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<h3>Quick Actions</h3>
+
+<div class="d-flex gap-2">
+
+    <a href="/books" class="btn btn-primary">
+        Browse Books
+    </a>
+
+    <a href="/cart" class="btn btn-success">
+        My Cart
+    </a>
+
+    <a href="/my-orders" class="btn btn-dark">
+        My Orders
+    </a>
+
+</div>
+
+<br><br>
+
+<h3>Recent Orders</h3>
+
+<table class="table table-bordered">
+
+    <tr>
+
+        <th>Order ID</th>
+        <th>Total Amount</th>
+
+    </tr>
+
+    {% for order in recent_orders %}
+
+    <tr>
+
+        <td>
+            <a href="/order-details/{{ order.id }}">
+                #{{ order.id }}
+            </a>
+        </td>
+
+        <td>
+            ₹ {{ order.total_amount }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

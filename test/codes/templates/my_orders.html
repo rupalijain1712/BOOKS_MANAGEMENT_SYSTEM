@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>My Orders</h2>
+
+<hr>
+
+<table class="table table-bordered">
+
+    <tr>
+        <th>Order ID</th>
+        <th>Total Amount</th>
+    </tr>
+
+    {% for order in orders %}
+
+    <tr>
+
+        <td>
+             <a href="/order-details/{{ order.id }}">
+                #{{ order.id }}
+            </a>
+        </td>
+
+        <td>
+            ₹ {{ order.total_amount }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

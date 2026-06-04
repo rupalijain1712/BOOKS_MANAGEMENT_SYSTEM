@@ -538,6 +538,88 @@ def increase_cart(cart_id):
 
     return redirect("/cart")
 
+@app.route("/my-orders")
+@login_required
+def my_orders():
+
+    orders = Order.query.filter_by(
+        user_id=current_user.id
+    ).order_by(
+        Order.id.desc()
+    ).all()
+
+    return render_template(
+        "my_orders.html",
+        orders=orders
+    )
+@app.route("/order-details/<int:order_id>")
+@login_required
+def order_details(order_id):
+
+    order = Order.query.get_or_404(order_id)
+
+    order_items = OrderItem.query.filter_by(
+        order_id=order.id
+    ).all()
+
+    items = []
+
+    for item in order_items:
+
+        book = Book.query.get(item.book_id)
+
+        items.append({
+            "title": book.title,
+            "quantity": item.quantity,
+            "price": item.price
+        })
+
+    return render_template(
+        "order_details.html",
+        order=order,
+        items=items
+    )
+@app.route("/dashboard")
+@login_required
+def dashboard():
+
+    total_orders = Order.query.filter_by(
+        user_id=current_user.id
+    ).count()
+
+    cart_items = Cart.query.filter_by(
+        user_id=current_user.id
+    ).count()
+
+    orders = Order.query.filter_by(
+        user_id=current_user.id
+    ).all()
+
+    books_bought = 0
+
+    for order in orders:
+
+        items = OrderItem.query.filter_by(
+            order_id=order.id
+        ).all()
+
+        for item in items:
+
+            books_bought += item.quantity
+
+    recent_orders = Order.query.filter_by(
+        user_id=current_user.id
+    ).order_by(
+        Order.id.desc()
+    ).limit(5).all()
+
+    return render_template(
+        "dashboard.html",
+        total_orders=total_orders,
+        cart_items=cart_items,
+        books_bought=books_bought,
+        recent_orders=recent_orders
+    )
 
 
 if __name__ == "__main__":
