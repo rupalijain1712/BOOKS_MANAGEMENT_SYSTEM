@@ -4,7 +4,6 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from datetime import datetime, timezone
-from services.google_books import fetch_book_details
 
 from flask_login import (
     LoginManager,
@@ -213,8 +212,8 @@ def edit_book(id):
             book.stock = int(request.form["stock"])
             book.category = request.form["category"]
             
-            # Update the timeline property dynamically on change
-            book.updated_at = datetime.now(timezone.utc)
+            # Update the timeline property dynamically on change to IST
+            book.updated_at = datetime.now(IST)
             
             db.session.commit()
             return redirect(url_for("admin_dashboard"))
