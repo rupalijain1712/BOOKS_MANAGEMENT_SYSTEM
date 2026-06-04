@@ -3,7 +3,6 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from datetime import datetime, timezone
 from datetime import datetime
 import pytz
 
@@ -72,6 +71,7 @@ def home():
         latest_books=latest_books,
         categories=categories
     )
+
 
 
 # Registrations Code:
@@ -197,8 +197,6 @@ def admin_users():
     ) 
 
 # edit books:
-# Make sure your app.py imports timezone utility at the very top:
-# from datetime import datetime, timezone
 
 @app.route("/edit-book/<int:id>", methods=["GET", "POST"])
 @login_required
@@ -259,6 +257,7 @@ def delete_book(id):
 @app.route("/books")
 def books():
 
+
     search = request.args.get("search")
     category = request.args.get("category")
 
@@ -287,6 +286,7 @@ def books():
         books=all_books,
         categories=categories
     )
+
 
 # code for the logout
 @app.route("/logout")
