@@ -26,9 +26,9 @@
     </button>
 
     <div class="container">
-        
+
         <a class="navbar-brand" href="/">
-            Book Management System
+            BookVerse
         </a>
 
         <div class="navbar-nav">
@@ -47,6 +47,12 @@
 
                     <a class="nav-link" href="/admin/dashboard">
                         Admin Dashboard
+                    </a>
+
+                {% else %}
+
+                    <a class="nav-link" href="/cart">
+                        Cart
                     </a>
 
                 {% endif %}
@@ -72,7 +78,6 @@
     </div>
 
 </nav>
-
 
 <!-- PAGE CONTENT -->
 

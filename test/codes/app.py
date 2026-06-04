@@ -9,6 +9,9 @@ import pytz
 
 IST = pytz.timezone('Asia/Kolkata')
 
+from models.order import Order
+from models.order_item import OrderItem
+from models.cart import Cart
 from services.google_books import fetch_book_details
 from flask_login import (
     LoginManager,
@@ -338,6 +341,204 @@ def admin_dashboard():
         books_count=books_count,
         users_count=users_count
     )
+@app.route("/add-to-cart/<int:book_id>")
+@login_required
+def add_to_cart(book_id):
+
+    book = Book.query.get_or_404(book_id)
+
+    cart_item = Cart.query.filter_by(
+        user_id=current_user.id,
+        book_id=book_id
+    ).first()
+
+    if cart_item:
+
+        if cart_item.quantity < book.stock:
+            cart_item.quantity += 1
+
+    else:
+
+        if book.stock > 0:
+
+            cart_item = Cart(
+                user_id=current_user.id,
+                book_id=book_id,
+                quantity=1
+            )
+
+            db.session.add(cart_item)
+
+    db.session.commit()
+
+    return redirect("/books")
+
+@app.route("/cart")
+@login_required
+def cart():
+
+    cart_items = Cart.query.filter_by(
+        user_id=current_user.id
+    ).all()
+    total = 0
+    cart_data = []
+
+    for item in cart_items:
+
+        book = Book.query.get(item.book_id)
+
+        subtotal = book.price * item.quantity
+
+        total += subtotal
+
+        cart_data.append({
+            "cart_id": item.id,
+            "title": book.title,
+            "price": book.price,
+            "quantity": item.quantity,
+            "subtotal": subtotal
+    })
+
+    return render_template(
+        "cart.html",
+        cart_data=cart_data,
+        total=total
+    )
+
+@app.route("/checkout")
+@login_required
+def checkout():
+
+    cart_items = Cart.query.filter_by(
+        user_id=current_user.id
+    ).all()
+
+    if not cart_items:
+
+        return redirect("/cart")
+
+    total_amount = 0
+
+    for item in cart_items:
+
+        book = Book.query.get(item.book_id)
+
+        if item.quantity > book.stock:
+
+            return f"""
+            Not enough stock for
+            {book.title}
+            """
+
+        total_amount += (
+            book.price * item.quantity
+        )
+
+    order = Order(
+        user_id=current_user.id,
+        total_amount=total_amount
+    )
+
+    db.session.add(order)
+    db.session.commit()
+
+    for item in cart_items:
+
+        book = Book.query.get(item.book_id)
+
+        order_item = OrderItem(
+
+            order_id=order.id,
+
+            book_id=book.id,
+
+            quantity=item.quantity,
+
+            price=book.price
+        )
+
+        db.session.add(order_item)
+
+        # reduce stock
+
+        book.stock -= item.quantity
+
+        # clear cart
+
+        db.session.delete(item)
+
+    db.session.commit()
+
+    return redirect(
+        f"/order-success/{order.id}"
+    )
+@app.route(
+    "/order-success/<int:order_id>"
+)
+@login_required
+def order_success(order_id):
+
+    order = Order.query.get_or_404(
+        order_id
+    )
+
+    return render_template(
+        "order_success.html",
+        order=order
+    )
+
+@app.route("/remove-from-cart/<int:cart_id>")
+@login_required
+def remove_from_cart(cart_id):
+
+    cart_item = Cart.query.get_or_404(cart_id)
+
+    if cart_item.user_id == current_user.id:
+
+        db.session.delete(cart_item)
+
+        db.session.commit()
+
+    return redirect("/")
+@app.route("/decrease-cart/<int:cart_id>")
+@login_required
+def decrease_cart(cart_id):
+
+    cart_item = Cart.query.get_or_404(cart_id)
+
+    if cart_item.user_id == current_user.id:
+
+        if cart_item.quantity > 1:
+
+            cart_item.quantity -= 1
+
+        else:
+
+            db.session.delete(cart_item)
+
+        db.session.commit()
+
+    return redirect("/cart")
+
+@app.route("/increase-cart/<int:cart_id>")
+@login_required
+def increase_cart(cart_id):
+
+    cart_item = Cart.query.get_or_404(cart_id)
+
+    book = Book.query.get(cart_item.book_id)
+
+    if cart_item.user_id == current_user.id:
+
+        if cart_item.quantity < book.stock:
+
+            cart_item.quantity += 1
+
+            db.session.commit()
+
+    return redirect("/cart")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
