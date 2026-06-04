@@ -16,8 +16,17 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
-    <div class="container">
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
 
+    <button onclick="history.back()" class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back
+    </button>
+
+    <div class="container">
+        
         <a class="navbar-brand" href="/">
             Book Management System
         </a>
@@ -63,6 +72,7 @@
     </div>
 
 </nav>
+
 
 <!-- PAGE CONTENT -->
 
@@ -120,7 +130,12 @@
                     Discover thousands of books across different categories.
                 </p>
 
-                <h5>Copyright@Anudip.org</h5>
+                <h5>Copyright@
+                    <a href="https://anudip.org/">
+                        <img src="data:image/png;base64,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" alt="anudip.org" width="100" height="40">
+                    </a>
+
+                </h5>
 
                 <p style="color: grey;">
                     Devs:<br>Rupali Jain . Sayar Sekhar Ghosh
