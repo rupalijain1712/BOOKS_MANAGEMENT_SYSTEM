@@ -16,7 +16,7 @@ class Book(db.Model):
 
     category = db.Column(db.String(100))
 
-    isbn = db.Column(db.String(50), unique=True)
+    isbn = db.Column(db.String(50), unique=True, nullable=True)
 
     price = db.Column(db.Float)
 
@@ -30,5 +30,5 @@ class Book(db.Model):
     updated_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(IST),
-        onupdate=lambda: datetime.now(IST) 
+        onupdate=lambda: datetime.now(IST)
     )

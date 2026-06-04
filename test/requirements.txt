@@ -22,3 +22,4 @@ typing-extensions==4.15.0
 werkzeug==3.1.8
 wtforms==3.2.2
 pytz==2026.2
+requests==2.34.2

@@ -4,6 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from datetime import datetime, timezone
+from services.google_books import fetch_book_details
 
 from flask_login import (
     LoginManager,
@@ -138,14 +139,21 @@ def add_book():
     if request.method == "POST":
         try:
             # Create the new Book instance from form data
+            book_name = request.form["book_name"]
+
+            book_data = fetch_book_details(book_name)
+
+            if not book_data:
+                return "Book not found in Google Books"
+
             new_book = Book(
-                title=request.form["title"],
-                author=request.form["author"],
+                title=book_data["title"],
+                author=book_data["author"],
                 category=request.form["category"],
-                isbn=request.form["isbn"],
+                isbn=book_data.get("isbn") or None,
                 price=float(request.form["price"]),
                 stock=int(request.form["stock"])
-            )
+                )
 
             # Stage and commit to MySQL
             db.session.add(new_book)
@@ -326,5 +334,6 @@ def admin_dashboard():
         books_count=books_count,
         users_count=users_count
     )
+
 if __name__ == "__main__":
     app.run(debug=True)
